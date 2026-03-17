@@ -50,9 +50,5 @@ The original RUWV-NSR dataset was significantly imbalanced (~5k Neutral vs ~9k P
 | **Macro F1-Score** | ~65% | **70.21%** |
 | **Precision (Macro)** | ~67% | **71.56%** |
 
-### 📸 Seen on Screen
-
-*Figure 1: Neural Architecture & Dataset Expansion Statistics*
-
 ---
 
