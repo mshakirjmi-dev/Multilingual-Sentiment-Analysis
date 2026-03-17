@@ -1,7 +1,3 @@
-This is a systematic, research-oriented GitHub README structure for your project. It presents your work as a formal study, highlighting the methodology and your ongoing paper.
-
----
-
 # Sentiment Analysis of Roman Urdu using XLM-RoBERTa with HAF-BiGRU
 
 ## 📖 Abstract
