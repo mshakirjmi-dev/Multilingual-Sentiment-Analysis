@@ -1,54 +1,70 @@
----
-
-# Sentiment Analysis of Roman Urdu via XLM-R + HAF-BiLSTM-GRU
-
-### Advancing Multilingual Transformers for Regional Code-Mixed Text
-
-## 📖 Abstract
-
-Digital communication in India and South Asia is characterized by a rich tapestry of regional diversity, where users frequently employ **Roman Urdu** (Urdu in Latin script) mixed with English (code-switching). This project proposes a novel hybrid architecture that integrates **Hierarchical Attention Fusion (HAF)** with **Bi-LSTM** and **Bi-GRU** layers on an **XLM-RoBERTa** backbone. This framework specifically targets phonetic inconsistencies and emotional intensifiers in non-standard scripts, achieving a **73.09% accuracy** on the RUWV-NSR benchmark.
-
-> **Research Status:** ✍️ I am currently authoring a formal research paper detailing these experimental results and the impact of sequential memory on informal regional text classification.
 
 ---
 
-## 🛑 The Problem: Linguistic Barriers in Regional NLP
+# Roman Urdu Sentiment Analysis via XLM-R + HAF-BiGRU
 
-India’s regional languages present several hurdles that standard English-centric models cannot overcome:
+### 📝 Project Overview
 
-1. **Orthographic Inconsistency:** Lack of standard spelling (e.g., *"acha"*, *"achha"*, *"axha"*) creates massive lexical noise.
-2. **Character Elongation:** Users repeat characters for emphasis (e.g., *"soooo"* or *"bohaaaaat"*). Standard tokenizers treat these as unique, unknown words.
-3. **Low-Resource Data:** Regional code-mixed datasets are often small and highly imbalanced.
+In a linguistically diverse country like **India**, standard NLP models often fail to capture regional nuances. This project focuses on **Roman Urdu**—a low-resource, code-mixed script used widely in digital communication. We move beyond basic transformers to a hybrid **HAF-BiGRU** architecture to handle the specific "noise" of informal regional text and the complexities of local dialects.
 
----
-
-## 🧪 Methodology & Innovation
-
-### 1. Hybrid HAF-BiLSTM-GRU Architecture
-
-Instead of using a standard linear head, this model utilizes a complex sequential-attention stack:
-
-* **Encoder:** `xlm-roberta-base` provides multilingual embeddings for 100+ languages, ideal for code-mixed Urdu-English text.
-* **Memory Layer (Bi-LSTM):** Specifically addresses the **elongation problem**. By maintaining a long-term cell state, the model learns that repeating "o"s represent an emotional intensifier rather than a new word.
-* **Gated Layer (Bi-GRU):** Captures long-range dependencies in informal sentence structures.
-* **Attention Fusion (HAF):** Extracts `[CLS]` tokens from the last **4 encoder layers** and applies learned softmax attention, focusing the model on the most sentiment-relevant regional keywords.
-
-### 2. Strategic Data Balancing (EDA)
-
-The original RUWV-NSR dataset was significantly imbalanced (~5k Neutral vs ~9k Positive/Negative). We applied **Easy Data Augmentation (EDA)**:
-
-* **Neutral Expansion:** Increased Neutral samples from **5,156 to 15,436** using synonym replacement and random insertion.
-* **Result:** Prevented model bias toward extreme sentiments and improved the **Macro F1-score**.
+> **Status:** ✍️ Research paper currently in progress. This repository contains the official implementation of the **HAF-BiGRU** framework.
 
 ---
 
-## 📊 Experimental Results
+### 🌍 The Sociolinguistic Context
 
-| Metric | Baseline (Standard Head) | Our HAF-BiLSTM-GRU |
+India is a land of regional languages where every region has its own unique linguistic identity.
+
+* **The Regional Challenge:** Universal models struggle with India's regional diversity. Standard scripts are often replaced in digital chat by **Roman Urdu** (Urdu words in Latin characters).
+* **Code-Mixed & Low-Resource:** This script is heavily "code-mixed" (Urdu + English) and lacks the massive datasets available for English, making it a "low-resource" challenge that requires specialized AI architectures.
+
+---
+
+### 🧬 Why These Techniques? (The Research Rationale)
+
+Each layer of our architecture is specifically chosen to address the hurdles of regional, informal text:
+
+#### **1. XLM-RoBERTa (The Backbone)**
+
+* **The Problem:** Roman Urdu is fundamentally **Code-Mixed**. English-only models cannot understand Urdu context, and monolingual models fail on English loanwords.
+* **The "Why":** **XLM-R** is a multilingual powerhouse. It provides a shared understanding across both languages, allowing the model to process a sentence that switches between Urdu and English seamlessly.
+
+#### **2. Bi-GRU Layer (Gated Recurrent Units)**
+
+* **The Problem:** Informal regional text lacks strict grammar and often contains long, rambling sentence structures.
+* **The "Why":** **GRUs** are highly efficient at capturing long-range dependencies. By using a **Bidirectional** GRU, the model reads the sentence from both ends, helping it understand the "flow" and context of informal Urdu phrases more effectively than a standard linear layer.
+
+#### **3. Hierarchical Attention Fusion (HAF)**
+
+* **The Problem:** In regional communication, certain keywords carry the entire emotional weight of a sentence (e.g., *"Weather bura hai par mood acha hai"*).
+* **The "Why":** **HAF** doesn't just look at the final output; it "fuses" information from multiple internal layers of the Transformer. This allows the model to focus its "attention" on the most sentiment-heavy regional keywords, improving accuracy in noisy text.
+
+---
+
+### 📸 Seen on Screen
+
+#### **1. Neural Architecture Diagram**
+
+#### **2. Solving Data Scarcity (EDA Results)**
+
+Because Roman Urdu is low-resource, we used **Easy Data Augmentation (EDA)** to balance the dataset.
+| Class | Before EDA | After EDA |
+| :--- | :--- | :--- |
+| **Neutral** | 5,156 | **15,436** (3x Increase) |
+
+---
+
+### 🧪 Methodology Summary
+
+| Component | Implementation | Target Problem |
 | --- | --- | --- |
-| **Accuracy** | ~68% | **73.09%** |
-| **Macro F1-Score** | ~65% | **70.21%** |
-| **Precision (Macro)** | ~67% | **71.56%** |
+| **Encoder** | XLM-RoBERTa | Code-Mixing & Multilingualism |
+| **Gated Layer** | **Bi-GRU** | Long-range Sentence Dependencies |
+| **Attention** | **HAF** | Hierarchical Keyword Weighting |
+| **Strategy** | **EDA** | Low-Resource Data Scarcity |
+| **Result** | **73.09% Accuracy** | Regional Script Optimization |
 
 ---
 
+
+**Maintained by Mohd Shakir** *PhD Scholar | Language Education & AI | New Delhi, India*
