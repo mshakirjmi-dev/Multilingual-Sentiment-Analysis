@@ -1,87 +1,58 @@
-# Sentiment Analysis of Roman Urdu using XLM-RoBERTa with HAF-BiGRU
+---
+
+# Sentiment Analysis of Roman Urdu via XLM-R + HAF-BiLSTM-GRU
+
+### Advancing Multilingual Transformers for Regional Code-Mixed Text
 
 ## 📖 Abstract
 
-This project focuses on the sentiment classification of **Roman Urdu**, a low-resource language variant. We propose a hybrid architecture combining the multilingual capabilities of **XLM-RoBERTa** with a custom **Hierarchical Attention Fusion (HAF)** and **Bidirectional Gated Recurrent Unit (BiGRU)** classification head. Our approach addresses the phonetic inconsistencies and informal nature of Roman Urdu, achieving significant performance improvements.
+Digital communication in India and South Asia is characterized by a rich tapestry of regional diversity, where users frequently employ **Roman Urdu** (Urdu in Latin script) mixed with English (code-switching). This project proposes a novel hybrid architecture that integrates **Hierarchical Attention Fusion (HAF)** with **Bi-LSTM** and **Bi-GRU** layers on an **XLM-RoBERTa** backbone. This framework specifically targets phonetic inconsistencies and emotional intensifiers in non-standard scripts, achieving a **73.09% accuracy** on the RUWV-NSR benchmark.
+
+> **Research Status:** ✍️ I am currently authoring a formal research paper detailing these experimental results and the impact of sequential memory on informal regional text classification.
 
 ---
 
-## 🛑 Problem Statement: The Challenges of Roman Urdu
+## 🛑 The Problem: Linguistic Barriers in Regional NLP
 
-The computational analysis of Roman Urdu is hindered by several unique linguistic barriers:
+India’s regional languages present several hurdles that standard English-centric models cannot overcome:
 
-1. **Lexical Variation (Phonetic Inconsistency):** Lack of standardized spelling (e.g., *"khubsurat"* vs. *"khoobsoorat"*).
-2. **Code-Switching:** Frequent mixing of English and Urdu within a single sentence.
-3. **Ambiguity:** Morphologically similar words carrying different meanings based on context.
-4. **Data Scarcity:** Limited availability of high-quality, balanced, and labeled datasets for training deep learning models.
+1. **Orthographic Inconsistency:** Lack of standard spelling (e.g., *"acha"*, *"achha"*, *"axha"*) creates massive lexical noise.
+2. **Character Elongation:** Users repeat characters for emphasis (e.g., *"soooo"* or *"bohaaaaat"*). Standard tokenizers treat these as unique, unknown words.
+3. **Low-Resource Data:** Regional code-mixed datasets are often small and highly imbalanced.
 
 ---
 
-## 🧪 Methodology & Architecture
+## 🧪 Methodology & Innovation
 
-### 1. Model Architecture
+### 1. Hybrid HAF-BiLSTM-GRU Architecture
 
-Our framework replaces the standard linear classification head of XLM-RoBERTa with a specialized **HAF-BiGRU** stack:
+Instead of using a standard linear head, this model utilizes a complex sequential-attention stack:
 
-* **Encoder:** Pre-trained `xlm-roberta-base` for deep contextual embeddings.
-* **BiGRU Layer:** Captures forward and backward long-range dependencies in the text.
-* **Hierarchical Attention (HAF):** A mechanism that assigns weights to different hidden states, allowing the model to focus on sentiment-bearing keywords regardless of their position.
+* **Encoder:** `xlm-roberta-base` provides multilingual embeddings for 100+ languages, ideal for code-mixed Urdu-English text.
+* **Memory Layer (Bi-LSTM):** Specifically addresses the **elongation problem**. By maintaining a long-term cell state, the model learns that repeating "o"s represent an emotional intensifier rather than a new word.
+* **Gated Layer (Bi-GRU):** Captures long-range dependencies in informal sentence structures.
+* **Attention Fusion (HAF):** Extracts `[CLS]` tokens from the last **4 encoder layers** and applies learned softmax attention, focusing the model on the most sentiment-relevant regional keywords.
 
-### 2. Data Augmentation (EDA)
+### 2. Strategic Data Balancing (EDA)
 
-To resolve the class imbalance found in the **RUWV-NSR dataset**, we applied **Easy Data Augmentation (EDA)**.
+The original RUWV-NSR dataset was significantly imbalanced (~5k Neutral vs ~9k Positive/Negative). We applied **Easy Data Augmentation (EDA)**:
 
-* **Neutral Class Expansion:** We increased the Neutral samples from ~5,000 to over 15,000 using synonym replacement and random insertion to ensure a robust, non-biased training process.
+* **Neutral Expansion:** Increased Neutral samples from **5,156 to 15,436** using synonym replacement and random insertion.
+* **Result:** Prevented model bias toward extreme sentiments and improved the **Macro F1-score**.
 
 ---
 
 ## 📊 Experimental Results
 
-The model was evaluated on the RUWV-NSR benchmark. Below is a comparison of the key metrics achieved:
+| Metric | Baseline (Standard Head) | Our HAF-BiLSTM-GRU |
+| --- | --- | --- |
+| **Accuracy** | ~68% | **73.09%** |
+| **Macro F1-Score** | ~65% | **70.21%** |
+| **Precision (Macro)** | ~67% | **71.56%** |
 
-| Metric | Score |
-| --- | --- |
-| **Accuracy** | **73.09%** |
-| **Macro F1-Score** | **70.21%** |
-| **Dataset Used** | RUWV-NSR (Ahmed, 2024) |
-| **Hardware** | NVIDIA Tesla T4 |
+### 📸 Seen on Screen
 
-### Visualizations
-
----
-
-## 📝 Ongoing Research
-
-I am **currently authoring a research paper** detailing this architecture and its comparative performance against standard Transformer models. The paper explores:
-
-* The effectiveness of Attention Fusion in informal Roman Urdu.
-* The impact of EDA on multilingual model convergence.
-* Hyperparameter optimization for BiGRU-based heads in NLP.
+*Figure 1: Neural Architecture & Dataset Expansion Statistics*
 
 ---
 
-## 🚀 Getting Started
-
-### Installation
-
-```bash
-git clone https://github.com/your-username/roman-urdu-sentiment.git
-cd roman-urdu-sentiment
-pip install -r requirements.txt
-
-```
-
-### Inference Snippet
-
-```python
-import torch
-from model import XLMR_HAF_BiGRU
-
-# Load trained model weights
-model = XLMR_HAF_BiGRU.load_from_checkpoint('./final_xlmr_haf_bigru/')
-# Predict sentiment
-text = "Bohat hi zabardast performance hai model ki!"
-prediction = model.predict(text)
-print(f"Sentiment: {prediction}")
-
-```
